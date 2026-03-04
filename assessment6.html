@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LuvCoachAI — Membership Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;400;500&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --royal: #1B2A6B; --rd: #0F1A45; --rm: #243580; --rl: #2E4099;
+  --rdim: rgba(27,42,107,0.07); --gold: #C9993A; --gl: #E0B85A;
+  --gp: #F5E6C0; --gdim: rgba(201,153,58,0.12); --gb: rgba(201,153,58,0.3);
+  --w: #fff; --ow: #F8F6F2; --pp: #F1EBE0; --ink: #080E1A;
+  --ash: #2C3A5C; --ln: rgba(27,42,107,0.1); --ls: rgba(27,42,107,0.18);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Outfit', sans-serif; font-weight: 300; background: linear-gradient(175deg, #F2F6FF 0%, #EBF3FA 100%); color: var(--ink); overflow-x: hidden; min-height: 100vh; }
+
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+  height: 62px; padding: 0 5vw;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(15,26,69,0.97); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201,153,58,0.15);
+}
+.t-logo { display: flex; align-items: center; gap: .62rem; text-decoration: none; }
+.t-mark { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg,var(--gold),var(--gl)); display: flex; align-items: center; justify-content: center; font-size: .68rem; font-weight: 500; color: var(--rd); }
+.t-name { font-family: 'Cormorant', serif; font-style: italic; font-size: 1.05rem; color: var(--gp); }
+.t-prog { flex: 1; max-width: 480px; margin: 0 3vw; }
+.t-stage { font-size: .56rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ash); margin-bottom: .3rem; text-align: center; }
+.t-bar { height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+.t-fill { height: 100%; background: linear-gradient(90deg, var(--rl), var(--gold)); border-radius: 2px; transition: width .6s ease; }
+.t-ct { font-size: .63rem; color: rgba(248,246,242,.3); letter-spacing: .1em; white-space: nowrap; }
+
+.screen { display: none; min-height: 100vh; padding-top: 62px; }
+.screen.on { display: flex; flex-direction: column; animation: sIn .4s ease; }
+@keyframes sIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+/* WELCOME */
+.welcome {
+  background: linear-gradient(160deg, #2B3FA0 0%, #1A6496 40%, #0E4F82 75%, #0A3566 100%); align-items: center; justify-content: center;
+  text-align: center; position: relative; overflow: hidden;
+}
+.welcome::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 70%, rgba(201,153,58,.12), transparent 45%),
+              radial-gradient(ellipse at 80% 20%, rgba(255,255,255,.06), transparent 50%);
+}
+.w-rings {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: min(88vw,720px); height: min(88vw,720px);
+  border-radius: 50%; border: 1px solid rgba(201,153,58,.05); pointer-events: none;
+}
+.w-rings::before { content: ''; position: absolute; inset: 80px; border-radius: 50%; border: 1px solid rgba(201,153,58,.03); }
+.w-inner { position: relative; z-index: 2; max-width: 660px; padding: 2rem 1.5rem; }
+.w-eye {
+  font-size: .57rem; letter-spacing: .3em; text-transform: uppercase; color: var(--gold);
+  margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; justify-content: center;
+}
+.w-eye::before, .w-eye::after { content: ''; width: 28px; height: 1px; background: rgba(201,153,58,.4); }
+.welcome h1 {
+  font-family: 'Cormorant Upright', serif; font-weight: 300;
+  font-size: clamp(2.5rem, 6.5vw, 5rem); line-height: 1; letter-spacing: -.03em;
+  color: var(--gp); margin-bottom: 1.3rem;
+}
+.welcome h1 em { color: var(--gold); font-style: italic; }
+.w-sub {
+  font-size: clamp(.88rem, 1.2vw, 1rem); color: rgba(248,246,242,.45);
+  line-height: 1.9; max-width: 540px; margin: 0 auto 2.2rem;
+}
+.w-sub strong { color: rgba(248,246,242,.8); font-weight: 400; }
+.w-parts { display: flex; flex-direction: column; gap: .45rem; margin: 0 auto 2rem; max-width: 520px; text-align: left; }
+.wp {
+  display: flex; align-items: flex-start; gap: 1rem; padding: .8rem 1.1rem;
+  background: rgba(255,255,255,.025); border: 1px solid rgba(255,255,255,.05); border-radius: 2px;
+}
+.wp-n { font-family: 'Cormorant Upright', serif; font-size: 1.1rem; color: rgba(201,153,58,.4); flex-shrink: 0; line-height: 1.3; }
+.wp-t { font-size: .76rem; color: rgba(248,246,242,.48); line-height: 1.55; }
+.wp-t strong { color: rgba(248,246,242,.78); font-weight: 400; }
+.w-btn {
+  font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
+  background: var(--gold); color: var(--rd); border: none;
+  padding: 1.1rem 2.8rem; border-radius: 2px; cursor: pointer;
+  transition: background .2s; font-family: 'Outfit', sans-serif;
+  margin-top: .5rem;
+}
+.w-btn:hover { background: var(--gl); }
+.w-note { font-size: .63rem; color: rgba(248,246,242,.18); margin-top: 1rem; font-style: italic; }
+
+/* QUESTION LAYOUT */
+.qs {
+  background: linear-gradient(175deg, #F2F6FF 0%, #EBF3FA 100%); justify-content: flex-start; align-items: center; padding: 80px 0 80px;
+}
+.q-wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 5vw; }
+.q-badge {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--rdim); border: 1px solid rgba(27,42,107,.15);
+  border-radius: 2px; padding: .35rem .85rem; margin-bottom: 1.5rem;
+}
+.q-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+.q-badge-lbl { font-size: .57rem; letter-spacing: .2em; text-transform: uppercase; color: var(--royal); }
+.q-ct { font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ash); margin-bottom: .8rem; }
+.q-h {
+  font-family: 'Cormorant Upright', serif; font-weight: 300;
+  font-size: clamp(1.6rem, 3.2vw, 2.7rem); color: var(--royal);
+  line-height: 1.15; letter-spacing: -.02em; margin-bottom: .8rem;
+}
+.q-h em { font-style: italic; color: var(--gold); }
+.q-ctx {
+  font-size: .82rem; color: var(--ash); line-height: 1.78; margin-bottom: 2rem;
+  padding: .9rem 1.1rem; background: var(--w);
+  border-left: 2px solid var(--gb); border-radius: 0 2px 2px 0;
+}
+.scenario { background: var(--w); border: 1px solid var(--ls); border-radius: 3px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.sc-lbl { font-size: .57rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ash); margin-bottom: .6rem; }
+.sc-txt { font-family: 'Cormorant', serif; font-size: 1.05rem; font-style: italic; color: var(--ink); line-height: 1.75; }
+
+.opts { display: flex; flex-direction: column; gap: .55rem; margin-bottom: 2rem; }
+.opt {
+  display: flex; align-items: flex-start; gap: 1rem; padding: 1.1rem 1.3rem;
+  background: var(--w); border: 1px solid var(--ls); border-radius: 3px;
+  cursor: pointer; transition: all .2s;
+}
+.opt:hover { border-color: rgba(27,42,107,.3); }
+.opt.sel { border-color: var(--royal); background: var(--rdim); }
+.opt.sel .opt-ring { border-color: var(--royal); background: var(--royal); }
+.opt.sel .opt-ring::after { opacity: 1; }
+.opt-ring {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(27,42,107,.22); flex-shrink: 0; margin-top: .1rem;
+  position: relative; transition: all .2s;
+}
+.opt-ring::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%); width: 6px; height: 6px;
+  border-radius: 50%; background: white; opacity: 0; transition: opacity .2s;
+}
+.opt-lbl { font-size: .84rem; font-weight: 400; color: var(--ink); margin-bottom: .15rem; }
+.opt-sub { font-size: .71rem; color: var(--ash); line-height: 1.55; }
+
+.ai-think {
+  display: none; align-items: center; gap: .75rem; padding: .7rem 1rem;
+  background: var(--rdim); border: 1px solid rgba(27,42,107,.12);
+  border-radius: 2px; margin-bottom: 1rem;
+}
+.ai-think.show { display: flex; }
+.ai-dots { display: flex; gap: .3rem; }
+.ai-d { width: 5px; height: 5px; border-radius: 50%; background: var(--royal); animation: db 1.2s ease infinite; }
+.ai-d:nth-child(2) { animation-delay: .15s; }
+.ai-d:nth-child(3) { animation-delay: .3s; }
+@keyframes db { 0%,100% { transform: translateY(0); opacity: .3; } 50% { transform: translateY(-4px); opacity: 1; } }
+.ai-think-txt { font-size: .72rem; color: var(--royal); }
+
+.scale-wrap { margin-bottom: 2.2rem; }
+.sc-lbls { display: flex; justify-content: space-between; font-size: .67rem; color: var(--ash); margin-bottom: .9rem; }
+.sc-track { position: relative; height: 5px; background: rgba(27,42,107,.1); border-radius: 3px; cursor: pointer; margin-bottom: 1.2rem; }
+.sc-trk-fill { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg,var(--royal),var(--gold)); border-radius: 3px; }
+.sc-thumb { position: absolute; top: 50%; transform: translate(-50%,-50%); width: 22px; height: 22px; border-radius: 50%; background: var(--royal); border: 3px solid white; box-shadow: 0 2px 8px rgba(27,42,107,.3); cursor: grab; }
+.sc-val { text-align: center; font-family: 'Cormorant Upright', serif; font-size: 2.2rem; font-weight: 300; color: var(--royal); line-height: 1; }
+.sc-val-lbl { text-align: center; font-size: .72rem; color: var(--ash); margin-top: .3rem; font-style: italic; }
+
+.ta { width: 100%; min-height: 130px; padding: 1rem 1.1rem; font-family: 'Outfit', sans-serif; font-size: .84rem; font-weight: 300; color: var(--ink); line-height: 1.75; background: var(--w); border: 1px solid var(--ls); border-radius: 3px; resize: vertical; outline: none; transition: border-color .2s; margin-bottom: .5rem; }
+.ta:focus { border-color: var(--royal); }
+.ta-note { font-size: .67rem; color: var(--ash); margin-bottom: 1.8rem; font-style: italic; }
+
+.tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 2rem; }
+.tag { padding: .45rem 1rem; border-radius: 2px; font-size: .73rem; cursor: pointer; border: 1px solid var(--ls); background: var(--w); color: var(--ash); transition: all .2s; }
+.tag:hover { border-color: rgba(27,42,107,.32); color: var(--royal); }
+.tag.sel { border-color: var(--royal); background: var(--rdim); color: var(--royal); }
+
+.axis { margin-bottom: 2rem; }
+.axis-title { font-size: .8rem; font-weight: 400; color: var(--royal); margin-bottom: .25rem; }
+.axis-sub { font-size: .7rem; color: var(--ash); margin-bottom: 1rem; }
+.axis-row { display: grid; grid-template-columns: 110px 1fr 110px; gap: 1rem; align-items: center; }
+.ax-lbl { font-size: .67rem; color: var(--ash); text-align: center; line-height: 1.35; }
+.ax-track { height: 5px; background: rgba(27,42,107,.1); border-radius: 3px; cursor: pointer; position: relative; }
+.ax-fill { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg,var(--royal),var(--gold)); border-radius: 3px; }
+.ax-thumb { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: var(--royal); border: 3px solid white; box-shadow: 0 2px 6px rgba(27,42,107,.3); cursor: grab; transform: translate(-50%,-50%); }
+
+.plist { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 2rem; }
+.pl-item { display: flex; align-items: center; gap: 1rem; padding: .9rem 1.1rem; background: var(--w); border: 1px solid var(--ln); border-radius: 2px; cursor: grab; user-select: none; transition: all .2s; }
+.pl-item.drag { background: var(--w); box-shadow: 0 8px 24px rgba(27,42,107,.12); border-color: rgba(27,42,107,.3); }
+.pl-handle { color: var(--ash); font-size: .75rem; }
+.pl-rank { width: 24px; height: 24px; border-radius: 50%; background: var(--rdim); border: 1px solid rgba(27,42,107,.15); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Upright', serif; font-size: .85rem; color: var(--royal); }
+.pl-lbl { font-size: .8rem; color: var(--ink); flex: 1; }
+
+.q-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 1px solid var(--ln); margin-top: 1rem; }
+.q-back { font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; color: var(--ash); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: .5rem; transition: color .2s; font-family: 'Outfit', sans-serif; }
+.q-back:hover { color: var(--royal); }
+.q-next { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; background: var(--royal); color: var(--w); border: none; padding: .85rem 2.2rem; border-radius: 2px; cursor: pointer; transition: background .2s; font-family: 'Outfit', sans-serif; }
+.q-next:hover { background: var(--rm); }
+.q-next:disabled { background: rgba(27,42,107,.22); cursor: not-allowed; }
+
+/* CULTURAL SCREEN */
+.cult { background: linear-gradient(175deg, #F2F6FF 0%, #EBF3FA 100%); justify-content: flex-start; align-items: center; padding: 80px 0 80px; }
+.cult-wrap { max-width: 720px; margin: 0 auto; width: 100%; padding: 0 5vw; }
+.cult-h { font-family: 'Cormorant Upright', serif; font-weight: 300; font-size: clamp(1.8rem, 3.8vw, 3.2rem); color: var(--royal); line-height: 1.1; letter-spacing: -.02em; margin-bottom: .6rem; }
+.cult-h em { font-style: italic; color: var(--gold); }
+.cult-sub { font-size: .84rem; color: var(--ash); line-height: 1.8; max-width: 540px; margin-bottom: 2.2rem; }
+.sect-lbl { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--royal); opacity: .6; margin-bottom: .8rem; margin-top: 1.5rem; }
+
+/* PROCESSING */
+.processing { background: linear-gradient(160deg, #2B3FA0 0%, #1A6496 40%, #0E4F82 75%, #0A3566 100%); align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+.processing::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 60%, rgba(201,153,58,.1), transparent 55%); }
+.proc-inner { position: relative; z-index: 2; max-width: 560px; padding: 2rem 1.5rem; }
+.proc-ring { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 2.5rem; position: relative; }
+.proc-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(201,153,58,.15); }
+.proc-spin { position: absolute; inset: 0; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--gold); animation: spin 1.2s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.proc-core { position: absolute; inset: 14px; border-radius: 50%; background: rgba(27,42,107,.55); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Upright', serif; font-size: 1.1rem; color: var(--gold); }
+.proc-inner h2 { font-family: 'Cormorant Upright', serif; font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 300; color: var(--gp); letter-spacing: -.02em; margin-bottom: .8rem; }
+.proc-inner h2 em { color: var(--gold); font-style: italic; }
+.proc-inner > p { font-size: .8rem; color: rgba(248,246,242,.42); line-height: 1.8; margin-bottom: 2.2rem; max-width: 440px; }
+.proc-steps { display: flex; flex-direction: column; gap: .5rem; text-align: left; max-width: 400px; margin: 0 auto; }
+.ps { display: flex; align-items: center; gap: .9rem; padding: .72rem 1rem; border-radius: 2px; background: rgba(255,255,255,.02); }
+.ps.done { background: rgba(45,122,79,.07); }
+.ps.act { background: rgba(27,42,107,.35); }
+.ps-ic { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: .62rem; }
+.ps.done .ps-ic { background: rgba(45,122,79,.25); color: #6BC98A; }
+.ps.act .ps-ic { background: rgba(201,153,58,.18); animation: pulse 1.5s ease infinite; color: var(--gold); }
+.ps.pend .ps-ic { background: rgba(255,255,255,.04); color: rgba(248,246,242,.2); }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(201,153,58,.3); } 50% { box-shadow: 0 0 0 6px rgba(201,153,58,0); } }
+.ps-lbl { font-size: .74rem; }
+.ps.done .ps-lbl { color: rgba(248,246,242,.45); }
+.ps.act .ps-lbl { color: rgba(248,246,242,.85); }
+.ps.pend .ps-lbl { color: rgba(248,246,242,.2); }
+.proc-error { margin-top: 1.5rem; font-size: .75rem; color: rgba(248,246,242,.35); font-style: italic; display: none; }
+
+/* RESULTS */
+.result { align-items: center; justify-content: center; text-align: center; padding: 80px 5vw 3rem; position: relative; }
+
+/* ACCEPTED */
+.res-acc { background: linear-gradient(175deg, #F2F6FF 0%, #EBF3FA 100%); }
+.acc-badge { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 2.2rem; background: linear-gradient(135deg, var(--royal), var(--rm)); border: 3px solid var(--gb); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 12px 40px rgba(27,42,107,.2); }
+.res-acc h1 { font-family: 'Cormorant Upright', serif; font-size: clamp(2.5rem, 6vw, 5.5rem); font-weight: 300; color: var(--royal); line-height: 1.05; letter-spacing: -.03em; margin-bottom: .9rem; }
+.res-acc h1 em { color: var(--gold); font-style: italic; }
+.res-acc > .ri-desc { font-size: .9rem; color: var(--ash); line-height: 1.85; max-width: 530px; margin: 0 auto 2.2rem; }
+.res-acc > .ri-desc strong { color: var(--royal); font-weight: 400; }
+.score-card { display: inline-flex; gap: 3rem; background: var(--w); border: 1px solid var(--ls); border-top: 3px solid var(--gold); border-radius: 3px; padding: 1.8rem 2.5rem; margin: 0 auto 2.8rem; }
+.sc-item { text-align: center; }
+.sc-n { font-family: 'Cormorant Upright', serif; font-size: 2.5rem; font-weight: 300; color: var(--royal); line-height: 1; }
+.sc-n.gld { color: var(--gold); }
+.sc-lbl2 { font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--ash); margin-top: .25rem; }
+.nxt { display: flex; flex-direction: column; gap: .5rem; max-width: 500px; margin: 0 auto 2.8rem; text-align: left; }
+.nxt-it { display: flex; align-items: flex-start; gap: .9rem; padding: .9rem 1.1rem; background: var(--w); border: 1px solid var(--ln); border-radius: 2px; }
+.nxt-n { font-family: 'Cormorant Upright', serif; font-size: 1.2rem; color: rgba(201,153,58,.38); flex-shrink: 0; line-height: 1.2; }
+.nxt-t h4 { font-size: .8rem; font-weight: 400; color: var(--royal); margin-bottom: .15rem; }
+.nxt-t p { font-size: .71rem; color: var(--ash); line-height: 1.55; }
+.res-btn { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; background: var(--royal); color: var(--w); border: none; padding: 1.1rem 2.8rem; border-radius: 2px; cursor: pointer; transition: background .2s; font-family: 'Outfit', sans-serif; }
+.res-btn:hover { background: var(--rm); }
+
+/* AI REASONING BOX */
+.ai-reasoning {
+  max-width: 500px; margin: 0 auto 2rem; text-align: left;
+  background: var(--w); border: 1px solid var(--ls); border-left: 3px solid var(--gb);
+  border-radius: 0 3px 3px 0; padding: 1.2rem 1.4rem;
+}
+.air-lbl { font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ash); margin-bottom: .6rem; }
+.air-txt { font-family: 'Cormorant', serif; font-style: italic; font-size: .95rem; color: var(--ash); line-height: 1.8; }
+
+/* BORDERLINE */
+.res-brd { background: linear-gradient(175deg, #F2F6FF 0%, #EBF3FA 100%); }
+.brd-badge { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 2.2rem; background: linear-gradient(135deg, #8A6A2A, var(--gold)); border: 3px solid rgba(201,153,58,.4); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+.res-brd h1 { font-family: 'Cormorant Upright', serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 300; color: var(--ink); line-height: 1.1; letter-spacing: -.02em; margin-bottom: .9rem; }
+.res-brd h1 em { font-style: italic; color: var(--gold); }
+.res-brd .ri-desc { font-size: .88rem; color: var(--ash); line-height: 1.85; max-width: 520px; margin: 0 auto 1.8rem; }
+.res-brd .ri-desc strong { color: var(--ink); font-weight: 400; }
+.brd-areas { display: flex; flex-direction: column; gap: .5rem; max-width: 500px; margin: 0 auto 2rem; text-align: left; }
+.ba { display: flex; align-items: flex-start; gap: .8rem; padding: .85rem 1.1rem; background: var(--w); border: 1px solid var(--ln); border-radius: 2px; font-size: .78rem; color: var(--ink); line-height: 1.6; }
+.ba::before { content: '→'; color: var(--gold); flex-shrink: 0; font-size: .8rem; }
+.brd-btn { font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; background: var(--gold); color: var(--rd); border: none; padding: 1.1rem 2.8rem; border-radius: 2px; cursor: pointer; transition: background .2s; font-family: 'Outfit', sans-serif; margin-bottom: 1rem; }
+.brd-btn:hover { background: var(--gl); }
+
+/* REJECTED */
+.res-rej { background: linear-gradient(160deg, #2B3FA0 0%, #1A6496 40%, #0E4F82 75%, #0A3566 100%); }
+.res-rej::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(27,42,107,.3), transparent 60%); pointer-events: none; }
+.res-rej > * { position: relative; z-index: 2; }
+.rej-badge { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 2.2rem; background: rgba(255,255,255,.04); border: 3px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+.res-rej h1 { font-family: 'Cormorant Upright', serif; font-size: clamp(2rem, 5vw, 4rem); font-weight: 300; color: var(--gp); line-height: 1.1; letter-spacing: -.02em; margin-bottom: .9rem; }
+.res-rej h1 em { font-style: italic; color: var(--gold); }
+.res-rej .ri-desc { font-size: .86rem; color: rgba(248,246,242,.43); line-height: 1.85; max-width: 530px; margin: 0 auto 1.8rem; }
+.res-rej .ri-desc strong { color: rgba(248,246,242,.75); font-weight: 400; }
+.rej-note { max-width: 480px; margin: 0 auto 2rem; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); border-radius: 3px; padding: 1.4rem 1.6rem; font-family: 'Cormorant', serif; font-style: italic; font-size: 1rem; color: rgba(248,246,242,.38); line-height: 1.75; }
+.rej-btn { font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: rgba(248,246,242,.28); background: none; border: 1px solid rgba(248,246,242,.1); padding: .9rem 2.2rem; border-radius: 2px; cursor: pointer; transition: all .2s; font-family: 'Outfit', sans-serif; }
+.rej-btn:hover { border-color: rgba(201,153,58,.32); color: rgba(248,246,242,.5); }
+
+/* DEMO BAR */
+.demo { position: fixed; bottom: 1.2rem; right: 1.2rem; z-index: 900; background: rgba(13,18,32,.95); border: 1px solid rgba(255,255,255,.1); border-radius: 4px; padding: .65rem .9rem; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; max-width: calc(100vw - 2.4rem); backdrop-filter: blur(10px); }
+.demo-lbl { font-size: .57rem; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-right: .2rem; }
+.db { font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.38); padding: .28rem .65rem; border-radius: 1px; cursor: pointer; transition: all .2s; font-family: 'Outfit', sans-serif; }
+.db:hover, .db.on { background: rgba(201,153,58,.18); border-color: var(--gold); color: var(--gold); }
+
+/* T&Cs INLINE PANEL */
+.tcs-panel {
+  max-width: 520px; margin: 0 auto 1.6rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(201,153,58,.2);
+  border-radius: 3px; overflow: hidden;
+}
+.tcs-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .75rem 1.1rem; cursor: pointer;
+  border-bottom: 1px solid rgba(201,153,58,.12);
+  user-select: none;
+}
+.tcs-header-left { display: flex; align-items: center; gap: .65rem; }
+.tcs-icon { font-size: .8rem; }
+.tcs-title { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gp); opacity: .7; }
+.tcs-toggle { font-size: .6rem; color: rgba(248,246,242,.3); transition: transform .25s; }
+.tcs-toggle.open { transform: rotate(180deg); }
+.tcs-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s ease;
+}
+.tcs-body.open { max-height: 900px; }
+.tcs-scroll {
+  padding: 1.1rem 1.2rem;
+  max-height: 260px; overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,153,58,.25) transparent;
+}
+.tcs-scroll::-webkit-scrollbar { width: 4px; }
+.tcs-scroll::-webkit-scrollbar-thumb { background: rgba(201,153,58,.25); border-radius: 2px; }
+.tcs-section { margin-bottom: 1.1rem; }
+.tcs-section:last-child { margin-bottom: 0; }
+.tcs-sh {
+  font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold); opacity: .8; margin-bottom: .35rem;
+}
+.tcs-p {
+  font-size: .72rem; color: rgba(248,246,242,.42); line-height: 1.7;
+}
+.tcs-p a { color: rgba(201,153,58,.6); text-decoration: underline; }
+.tcs-footer {
+  padding: .85rem 1.2rem;
+  border-top: 1px solid rgba(201,153,58,.1);
+  display: flex; align-items: flex-start; gap: .75rem;
+}
+.tcs-checkbox {
+  width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; margin-top: .1rem;
+  border: 1.5px solid rgba(201,153,58,.35); background: transparent;
+  cursor: pointer; appearance: none; -webkit-appearance: none;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; position: relative;
+}
+.tcs-checkbox:checked {
+  background: var(--gold); border-color: var(--gold);
+}
+.tcs-checkbox:checked::after {
+  content: '✓'; position: absolute;
+  font-size: .62rem; color: var(--rd); font-weight: 700; line-height: 1;
+}
+.tcs-agree-lbl {
+  font-size: .7rem; color: rgba(248,246,242,.45); line-height: 1.55; cursor: pointer;
+}
+.tcs-agree-lbl span { color: rgba(201,153,58,.7); text-decoration: underline; cursor: pointer; }
+.w-btn:disabled { background: rgba(201,153,58,.3); cursor: not-allowed; }
+
+@media (max-width: 600px) {
+  .axis-row { grid-template-columns: 1fr; }
+  .score-card { gap: 1.5rem; padding: 1.4rem; }
+  .demo { bottom: .5rem; right: .5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="t-logo" href="#">
+    <div class="t-mark">L</div>
+    <span class="t-name">LuvCoachAI</span>
+  </a>
+  <div class="t-prog">
+    <div class="t-stage" id="stage-lbl">Membership Assessment</div>
+    <div class="t-bar"><div class="t-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+  <div class="t-ct" id="prog-ct"></div>
+</div>
+
+<!-- WELCOME -->
+<div class="screen on welcome" id="s-welcome">
+  <div class="w-rings"></div>
+  <div class="w-inner">
+    <div class="w-eye">Membership Assessment</div>
+    <h1>Before we can<br><em>match you,</em><br>we need to know you.</h1>
+    <p class="w-sub">This assessment is the foundation of everything LuvCoachAI does. <strong>It is not a formality.</strong> The quality of your answers directly determines the quality of your matches — and whether you are admitted at all.</p>
+    <div class="w-parts">
+      <div class="wp"><span class="wp-n">01</span><div class="wp-t"><strong>Emotional Intelligence Assessment</strong> — Scenario-based questions that reveal how you actually handle relationships, not how you think you should.</div></div>
+      <div class="wp"><span class="wp-n">02</span><div class="wp-t"><strong>Values Mapping</strong> — Where you stand on the things that matter most to you: family, identity, what home means, what you won't compromise on.</div></div>
+      <div class="wp"><span class="wp-n">03</span><div class="wp-t"><strong>Intent & Readiness</strong> — Direct questions about what you're looking for and whether you are genuinely ready to find it.</div></div>
+    </div>
+    <!-- T&Cs PANEL -->
+    <div class="tcs-panel">
+      <div class="tcs-header" onclick="toggleTcs()">
+        <div class="tcs-header-left">
+          <span class="tcs-icon">🔒</span>
+          <span class="tcs-title">Assessment Privacy &amp; Data Notice — please read before continuing</span>
+        </div>
+        <span class="tcs-toggle" id="tcs-toggle">▼</span>
+      </div>
+      <div class="tcs-body" id="tcs-body">
+        <div class="tcs-scroll">
+          <div class="tcs-section">
+            <div class="tcs-sh">What this covers</div>
+            <div class="tcs-p">This notice applies to the assessment only. Full Terms &amp; Conditions — covering membership, payment, and AI limitations — will be presented at account creation. By proceeding, you agree to the terms below.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">Data we collect</div>
+            <div class="tcs-p">We collect your responses to scenario questions, scale inputs, and free-text answers. We do not collect your name, email, or payment information during this assessment. Interaction data (time per question, edits) is also recorded.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">How we use it</div>
+            <div class="tcs-p">Your responses are used solely to generate an AI-assisted admissions decision and, where borderline, a human review. Aggregated, anonymised data may be used to improve our model. We do not use your responses for advertising or third-party profiling.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">AI &amp; automated decisions</div>
+            <div class="tcs-p">Your assessment is evaluated in part by an AI system. Borderline decisions are always reviewed by a human before a final determination. You may request human reconsideration of any automated result. The AI is a matching tool — not clinical or psychological advice.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">Sensitive information</div>
+            <div class="tcs-p">Some responses — including those relating to emotional experiences and values — may constitute sensitive personal information. All assessment data is encrypted in transit and at rest, accessible only to authorised personnel, and never used to infer protected characteristics.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">Data retention</div>
+            <div class="tcs-p">If you do not proceed to membership, your responses are retained for 90 days then permanently deleted. If you create an account, your assessment data becomes part of your member profile governed by the full Terms &amp; Conditions.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">Your content &amp; our content</div>
+            <div class="tcs-p">Your written responses belong to you. You grant LoveCoach a limited licence to use them for the purposes above. The assessment itself — its questions, structure, and scoring methodology — is the intellectual property of LoveCoach, protected by US copyright law. You may not reproduce or extract assessment content.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">Your rights (US / CCPA)</div>
+            <div class="tcs-p">You have the right to know what data we hold, request deletion, and opt out of data sale (we do not sell personal data). To exercise these rights, contact <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9eeeecf7e8fffde7def2f1e8fbfdf1fffdf6b0fdf1f3">[email&#160;protected]</a>. We do not discriminate against users who exercise privacy rights.</div>
+          </div>
+          <div class="tcs-section">
+            <div class="tcs-sh">Not professional advice</div>
+            <div class="tcs-p">This assessment does not constitute psychological, therapeutic, medical, or relationship counselling advice. LoveCoach is a technology platform. If you are experiencing mental health difficulties, please seek qualified professional support.</div>
+          </div>
+        </div>
+        <div class="tcs-footer">
+          <input type="checkbox" class="tcs-checkbox" id="tcs-check" onchange="onTcsCheck()">
+          <label class="tcs-agree-lbl" for="tcs-check">
+            I have read and agree to the <span onclick="toggleTcs()">Assessment Privacy &amp; Data Notice</span>. I understand this is not the full Terms &amp; Conditions, which will be presented at account creation.
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button class="w-btn" id="begin-btn" disabled onclick="go('eq1')">Begin Assessment</button>
+    <p class="w-note">Approximately 45 minutes · Your responses are confidential · Honest answers produce better matches</p>
+  </div>
+</div>
+
+<!-- EQ Q1 — SCENARIO -->
+<div class="screen qs" id="s-eq1">
+  <div class="q-wrap">
+    <div class="q-badge"><div class="q-dot"></div><span class="q-badge-lbl">Part 1 of 3 — Emotional Intelligence</span></div>
+    <div class="q-ct">Question 1 of 8</div>
+    <h2 class="q-h">How do you tend to respond when someone you love <em>withdraws emotionally?</em></h2>
+    <div class="scenario">
+      <div class="sc-lbl">Situation</div>
+      <div class="sc-txt">Your partner has been quieter than usual for three days. They say everything is fine when you ask directly, but you sense something is wrong. You don't know if it's about you or something else entirely.</div>
+    </div>
+    <div class="opts" id="eq1-opts">
+      <div class="opt" onclick="selOpt('eq1',0)">
+        <div class="opt-ring"></div>
+        <div><div class="opt-lbl">I give them space and wait for them to come to me</div><div class="opt-sub">I believe people share when they're ready — pushing often makes things worse</div></div>
+      </div>
+      <div class="opt" onclick="selOpt('eq1',1)">
+        <div class="opt-ring"></div>
+        <div><div class="opt-lbl">I check in gently but make clear I'm available whenever they want to talk</div><div class="opt-sub">I want them to know I noticed, without applying any pressure</div></div>
+      </div>
+      <div class="opt" onclick="selOpt('eq1',2)">
+        <div class="opt-ring"></div>
+        <div><div class="opt-lbl">I find it hard not to ask again — I need to understand what's happening</div><div class="opt-sub">Uncertainty is difficult for me, especially when I worry it might be something I did</div></div>
+      </div>
+      <div class="opt" onclick="selOpt('eq1',3)">
+        <div class="opt-ring"></div>
+        <div><div class="opt-lbl">I withdraw a little too — mirroring their energy feels safer</div><div class="opt-sub">If they're closing off, trying to be warmer than usual can feel exposing</div></div>
+      </div>
+    </div>
+    <div class="ai-think" id="eq1-think">
+      <div class="ai-dots"><div class="ai-d"></div><div class="ai-d"></div><div class="ai-d"></div></div>
+      <span class="ai-think-txt">Analysing response pattern…</span>
+    </div>
+    <div class="q-nav">
+      <button class="q-back" onclick="go('welcome')">← Back</button>
+      <button class="q-next" id="eq1-btn" disabled onclick="go('eq2')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- EQ Q2 — SCALE -->
+<div class="screen qs" id="s-eq2">
+  <div class="q-wrap">
+    <div class="q-badge"><div class="q-dot"></div><span class="q-badge-lbl">Part 1 of 3 — Emotional Intelligence</span></div>
+    <div class="q-ct">Question 2 of 8</div>
+    <h2 class="q-h">How comfortable are you with expressing <em>vulnerability</em> early in a relationship?</h2>
+    <div class="q-ctx">Not emotional outpourings — but honest admission that you're uncertain, scared, or don't have everything figured out. How naturally does that come to you in an early relationship?</div>
+    <div class="scale-wrap">
+      <div class="sc-lbls">
+        <span>Very guarded —<br>I reveal slowly over time</span>
+        <span style="text-align:right">Very open —<br>I share early and freely</span>
+      </div>
+      <div class="sc-track" id="sc-eq2" onclick="setScale(event,'eq2')">
+        <div class="sc-trk-fill" id="eq2-fill" style="width:50%"></div>
+        <div class="sc-thumb" id="eq2-thumb" style="left:50%"></div>
+      </div>
+      <div class="sc-val" id="eq2-val">5</div>
+      <div class="sc-val-lbl" id="eq2-lbl">Somewhat open — I share when I feel safe enough</div>
+    </div>
+    <div class="q-nav">
+      <button class="q-back" onclick="go('eq1')">← Back</button>
+      <button class="q-next" onclick="go('eq3')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- EQ Q3 — OPEN TEXT -->
+<div class="screen qs" id="s-eq3">
+  <div class="q-wrap">
+    <div class="q-badge"><div class="q-dot"></div><span class="q-badge-lbl">Part 1 of 3 — Emotional Intelligence</span></div>
+    <div class="q-ct">Question 3 of 8</div>
+    <h2 class="q-h">Describe a moment you <em>got it wrong</em> in a relationship — and what you did next.</h2>
+    <div class="q-ctx">This can be small or significant. We are not looking for a confession — we are looking for self-awareness. The AI is assessing how you talk about your own mistakes, not the mistakes themselves.</div>
+    <textarea class="ta" id="eq3-ta" placeholder="Write honestly. There are no wrong answers here — only revealing ones." oninput="checkTa('eq3')"></textarea>
+    <div class="ta-note">Minimum 50 words. The quality of reflection matters more than the length.</div>
+    <div class="q-nav">
+      <button class="q-back" onclick="go('eq2')">← Back</button>
+      <button class="q-next" id="eq3-btn" disabled onclick="go('values')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- VALUES MAPPING -->
+<div class="screen cult" id="s-values">
+  <div class="cult-wrap">
+    <div class="q-badge"><div class="q-dot"></div><span class="q-badge-lbl">Part 2 of 3 — Values Mapping</span></div>
+    <h2 class="cult-h">Your <em>values blueprint.</em></h2>
+    <p class="cult-sub">This is where LuvCoachAI goes beyond surface-level matching. Your values and sense of identity are not tick-boxes — they shape who you're compatible with. Help us understand yours.</p>
+    <div class="sect-lbl">What matters most to you in a partner? Drag to reorder.</div>
+    <div class="plist" id="plist">
+      <div class="pl-item" draggable="true"><span class="pl-handle">⋮⋮</span><div class="pl-rank">1</div><span class="pl-lbl">Shared values and outlook on life</span></div>
+      <div class="pl-item" draggable="true"><span class="pl-handle">⋮⋮</span><div class="pl-rank">2</div><span class="pl-lbl">Emotional intelligence and maturity</span></div>
+      <div class="pl-item" draggable="true"><span class="pl-handle">⋮⋮</span><div class="pl-rank">3</div><span class="pl-lbl">Alignment on family and home life</span></div>
+      <div class="pl-item" draggable="true"><span class="pl-handle">⋮⋮</span><div class="pl-rank">4</div><span class="pl-lbl">Life direction and ambition</span></div>
+      <div class="pl-item" draggable="true"><span class="pl-handle">⋮⋮</span><div class="pl-rank">5</div><span class="pl-lbl">Faith, spirituality, or worldview</span></div>
+    </div>
+    <div class="sect-lbl" style="margin-top:1.5rem;">How central is family and home life in your vision of a relationship?</div>
+    <div class="axis">
+      <div class="axis-sub">Where you are today — not where you think you should be.</div>
+      <div class="axis-row">
+        <span class="ax-lbl">Independent — my own space first</span>
+        <div class="ax-track" onclick="setAx(event,'fam')">
+          <div class="ax-fill" id="ax-fam-f" style="width:55%"></div>
+          <div class="ax-thumb" id="ax-fam-t" style="left:55%"></div>
+        </div>
+        <span class="ax-lbl">Integrated — family always present</span>
+      </div>
+    </div>
+    <div class="sect-lbl">How defined is your picture of the future?</div>
+    <div class="axis">
+      <div class="axis-sub">When you imagine your life in ten years, how clear is that vision?</div>
+      <div class="axis-row">
+        <span class="ax-lbl">Open — I'll know it when I'm there</span>
+        <div class="ax-track" onclick="setAx(event,'lt')">
+          <div class="ax-fill" id="ax-lt-f" style="width:65%"></div>
+          <div class="ax-thumb" id="ax-lt-t" style="left:65%"></div>
+        </div>
+        <span class="ax-lbl">Defined — I know exactly what I want</span>
+      </div>
+    </div>
+    <div class="q-nav">
+      <button class="q-back" onclick="go('eq3')">← Back</button>
+      <button class="q-next" onclick="go('int1')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- INTENT Q1 -->
+<div class="screen qs" id="s-int1">
+  <div class="q-wrap">
+    <div class="q-badge"><div class="q-dot"></div><span class="q-badge-lbl">Part 3 of 3 — Intent & Readiness</span></div>
+    <div class="q-ct">Question 6 of 8</div>
+    <h2 class="q-h">Why are you applying <em>now,</em> as opposed to six months ago or six months from now?</h2>
+    <div class="q-ctx">We are not looking for a polished answer. We are looking for an honest one. What has shifted, what are you ready for, and why does it feel different this time?</div>
+    <textarea class="ta" id="int1-ta" placeholder="Take your time with this one." oninput="checkTa('int1')"></textarea>
+    <div class="ta-note">This question carries significant weight in the intent scoring. Write as if you mean it — because we will read it as if you do.</div>
+    <div class="q-nav">
+      <button class="q-back" onclick="go('values')">← Back</button>
+      <button class="q-next" id="int1-btn" disabled onclick="go('int2')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- INTENT Q2 — DEALBREAKERS -->
+<div class="screen qs" id="s-int2">
+  <div class="q-wrap">
+    <div class="q-badge"><div class="q-dot"></div><span class="q-badge-lbl">Part 3 of 3 — Intent & Readiness</span></div>
+    <div class="q-ct">Question 7 of 8</div>
+    <h2 class="q-h">What are your genuine <em>dealbreakers?</em></h2>
+    <div class="q-ctx">Select all that apply. This shapes how the AI filters your matches — not to limit you, but to respect you. Knowing what you cannot compromise on is a sign of self-knowledge, not rigidity.</div>
+    <div class="tags">
+      <div class="tag" onclick="togTag(this)">Doesn't want children</div>
+      <div class="tag" onclick="togTag(this)">Wants children (I don't)</div>
+      <div class="tag" onclick="togTag(this)">Already has children</div>
+      <div class="tag" onclick="togTag(this)">Different core values</div>
+      <div class="tag" onclick="togTag(this)">Non-monogamous relationship style</div>
+      <div class="tag" onclick="togTag(this)">Different long-term location plans</div>
+      <div class="tag" onclick="togTag(this)">Significant age gap (10+ years)</div>
+      <div class="tag" onclick="togTag(this)">No life direction or ambition</div>
+      <div class="tag" onclick="togTag(this)">Substance use</div>
+      <div class="tag" onclick="togTag(this)">Lack of emotional availability</div>
+      <div class="tag" onclick="togTag(this)">Fundamentally different faith or worldview</div>
+    </div>
+    <div class="q-nav">
+      <button class="q-back" onclick="go('int1')">← Back</button>
+      <button class="q-next" onclick="go('int3')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- INTENT Q3 — FINAL -->
+<div class="screen qs" id="s-int3">
+  <div class="q-wrap">
+    <div class="q-badge"><div class="q-dot"></div><span class="q-badge-lbl">Part 3 of 3 — Intent & Readiness</span></div>
+    <div class="q-ct">Question 8 of 8 — Final</div>
+    <h2 class="q-h">Is there anything you want us to <em>understand</em> about you that this assessment hasn't asked?</h2>
+    <div class="q-ctx">Optional, but often the most revealing part of an application. If there is something about your journey, your history, or what you're carrying into this that feels important — this is the place.</div>
+    <textarea class="ta" id="int3-ta" placeholder="Optional — but we encourage it." style="min-height:110px;"></textarea>
+    <div class="ta-note">This is read by a human reviewer if your application is borderline. There is no character limit.</div>
+    <div class="q-nav">
+      <button class="q-back" onclick="go('int2')">← Back</button>
+      <button class="q-next" onclick="startProc()">Submit Assessment →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESSING -->
+<div class="screen processing" id="s-proc">
+  <div class="proc-inner">
+    <div class="proc-ring">
+      <div class="proc-spin"></div>
+      <div class="proc-core">AI</div>
+    </div>
+    <h2>Reviewing your<br><em>assessment.</em></h2>
+    <p>The AI is analysing your response patterns across all three sections. This typically takes 30–60 seconds. Please do not close this window.</p>
+    <div class="proc-steps">
+      <div class="ps pend" id="ps1"><div class="ps-ic">○</div><span class="ps-lbl">EQ pattern analysis</span></div>
+      <div class="ps pend" id="ps2"><div class="ps-ic">○</div><span class="ps-lbl">Values mapping</span></div>
+      <div class="ps pend" id="ps3"><div class="ps-ic">○</div><span class="ps-lbl">Intent scoring</span></div>
+      <div class="ps pend" id="ps4"><div class="ps-ic">○</div><span class="ps-lbl">Final threshold assessment</span></div>
+    </div>
+    <p class="proc-error" id="proc-error">Analysis encountered an issue. Routing to manual review.</p>
+  </div>
+</div>
+
+<!-- ACCEPTED -->
+<div class="screen result res-acc" id="s-acc">
+  <div class="acc-badge">🎯</div>
+  <h1>You've been<br><em>accepted.</em></h1>
+  <p class="ri-desc">Your assessment scored above our intent threshold. <strong>Welcome to LuvCoachAI.</strong> You are exactly the kind of person this platform was built for — and the people already inside it have been waiting for someone like you.</p>
+  <div class="score-card">
+    <div class="sc-item"><div class="sc-n" id="acc-eq">—</div><div class="sc-lbl2">EQ Score</div></div>
+    <div class="sc-item"><div class="sc-n" id="acc-val">—</div><div class="sc-lbl2">Values Depth</div></div>
+    <div class="sc-item"><div class="sc-n gld" id="acc-int">—</div><div class="sc-lbl2">Intent Score</div></div>
+  </div>
+  <div class="ai-reasoning">
+    <div class="air-lbl">AI Assessment Note</div>
+    <div class="air-txt" id="acc-reasoning">—</div>
+  </div>
+  <div class="nxt">
+    <div class="nxt-it"><span class="nxt-n">01</span><div class="nxt-t"><h4>Choose your membership tier</h4><p>Observer is free. Seeker (£35/mo) unlocks full dossiers and messaging. Intentional (£100/mo) adds concierge guidance.</p></div></div>
+    <div class="nxt-it"><span class="nxt-n">02</span><div class="nxt-t"><h4>Complete your profile</h4><p>A few final details before your first match is generated.</p></div></div>
+    <div class="nxt-it"><span class="nxt-n">03</span><div class="nxt-t"><h4>Your first match arrives tomorrow at 09:00</h4><p>The AI begins working immediately. Expect your first match within 24 hours of profile completion.</p></div></div>
+  </div>
+  <button class="res-btn">Choose Your Membership</button>
+</div>
+
+<!-- BORDERLINE -->
+<div class="screen result res-brd" id="s-brd">
+  <div class="brd-badge">⏳</div>
+  <h1>Under<br><em>human review.</em></h1>
+  <p class="ri-desc">Your assessment is strong in places and your intent reads as genuine. However, a few responses have been flagged for closer review before we can make a final decision. <strong>This is not a rejection.</strong></p>
+  <div class="brd-areas" id="brd-areas">
+    <div class="ba">A reviewer will read your full application within 2 working days.</div>
+  </div>
+  <div class="ai-reasoning" style="background:var(--w);">
+    <div class="air-lbl">AI Assessment Note</div>
+    <div class="air-txt" id="brd-reasoning">—</div>
+  </div>
+  <p class="ri-desc"><strong>A human reviewer will read your full application within 2 working days.</strong> If accepted, your membership begins immediately.</p>
+  <button class="brd-btn">Understood — Notify Me by Email</button>
+</div>
+
+<!-- REJECTED -->
+<div class="screen result res-rej" id="s-rej">
+  <div class="rej-badge">◌</div>
+  <h1>Not the <em>right moment.</em></h1>
+  <p class="ri-desc">Your assessment suggests you may not be in the place LuvCoachAI requires right now. <strong>This is not a judgement of who you are.</strong> It is a reading of your readiness at this specific time — and readiness changes.</p>
+  <div class="rej-note" id="rej-reasoning">"The honesty of this assessment is only useful if we act on what it tells us. We would rather tell you the truth now than let you spend time and money on a platform you haven't yet arrived at."</div>
+  <p class="ri-desc">You are welcome to reapply in 90 days. Your previous responses will not be carried forward — we will read you fresh.</p>
+  <button class="rej-btn">Join the Waitlist for 90 Days</button>
+</div>
+
+<!-- DEMO BAR -->
+<div class="demo">
+  <span class="demo-lbl">Preview:</span>
+  <button class="db on" onclick="demGo('welcome')">Welcome</button>
+  <button class="db" onclick="demGo('eq1')">EQ Scenario</button>
+  <button class="db" onclick="demGo('eq2')">EQ Scale</button>
+  <button class="db" onclick="demGo('eq3')">EQ Text</button>
+  <button class="db" onclick="demGo('values')">Values</button>
+  <button class="db" onclick="demGo('int1')">Intent</button>
+  <button class="db" onclick="demGo('int2')">Dealbreakers</button>
+  <button class="db" onclick="demGo('int3')">Final Q</button>
+  <button class="db" onclick="startProc()">Processing</button>
+  <button class="db" onclick="demGo('acc')">✓ Accepted</button>
+  <button class="db" onclick="demGo('brd')">⏳ Review</button>
+  <button class="db" onclick="demGo('rej')">✕ Rejected</button>
+</div>
+
+<script>
+// ─── T&Cs PANEL ──────────────────────────────────────────────────────────────
+function toggleTcs() {
+  const body = document.getElementById('tcs-body');
+  const toggle = document.getElementById('tcs-toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  toggle.classList.toggle('open', !isOpen);
+}
+
+function onTcsCheck() {
+  const checked = document.getElementById('tcs-check').checked;
+  const btn = document.getElementById('begin-btn');
+  if (btn) btn.disabled = !checked;
+}
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const answers = {
+  eq1_choice: null,        // 0-3 index
+  eq1_label: '',
+  eq2_vulnerability: 5,    // 1-10
+  eq3_mistake: '',         // open text
+  values_priority: [],     // ordered array of strings
+  values_family: 55,       // 0-100
+  values_future: 65,       // 0-100
+  int1_why_now: '',        // open text
+  int2_dealbreakers: [],   // array of strings
+  int3_extra: '',          // open text (optional)
+};
+
+const eq1Labels = [
+  'Give space and wait for them to come to me',
+  'Check in gently but make clear I\'m available',
+  'Find it hard not to ask again — need to understand',
+  'Withdraw a little too — mirroring their energy feels safer'
+];
+
+// ─── STAGES ──────────────────────────────────────────────────────────────────
+const stages = {
+  welcome: { lbl: 'Introduction', pct: 0, ct: '' },
+  eq1: { lbl: 'Part 1 — Emotional Intelligence', pct: 10, ct: '1 / 8' },
+  eq2: { lbl: 'Part 1 — Emotional Intelligence', pct: 22, ct: '2 / 8' },
+  eq3: { lbl: 'Part 1 — Emotional Intelligence', pct: 34, ct: '3 / 8' },
+  values: { lbl: 'Part 2 — Values Mapping', pct: 52, ct: '4–5 / 8' },
+  int1: { lbl: 'Part 3 — Intent & Readiness', pct: 68, ct: '6 / 8' },
+  int2: { lbl: 'Part 3 — Intent & Readiness', pct: 80, ct: '7 / 8' },
+  int3: { lbl: 'Part 3 — Intent & Readiness', pct: 90, ct: '8 / 8' },
+  proc: { lbl: 'AI Analysis in Progress…', pct: 97, ct: '' },
+  acc: { lbl: 'Assessment Complete', pct: 100, ct: '' },
+  brd: { lbl: 'Assessment Complete', pct: 100, ct: '' },
+  rej: { lbl: 'Assessment Complete', pct: 100, ct: '' },
+};
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  const s = document.getElementById('s-' + id);
+  if (!s) return;
+  s.classList.add('on');
+  window.scrollTo(0, 0);
+  const m = stages[id] || {};
+  document.getElementById('stage-lbl').textContent = m.lbl || '';
+  document.getElementById('prog-fill').style.width = (m.pct || 0) + '%';
+  document.getElementById('prog-ct').textContent = m.ct || '';
+}
+
+function demGo(id) {
+  document.querySelectorAll('.db').forEach(b => b.classList.remove('on'));
+  event.target.classList.add('on');
+  go(id);
+}
+
+// ─── SCALE ───────────────────────────────────────────────────────────────────
+const scaleLabels = {
+  1: 'Very guarded — I protect myself carefully',
+  2: 'Guarded — I reveal slowly as trust builds',
+  3: 'Cautious — I share when prompted and safe',
+  4: 'Somewhat guarded — I take my time',
+  5: 'Somewhat open — I share when I feel safe enough',
+  6: 'Moderately open — I find sharing comes naturally',
+  7: 'Fairly open — I lean into honesty quickly',
+  8: 'Open — I share early and find it builds trust',
+  9: 'Very open — vulnerability feels like connection',
+  10: 'Fully open — being guarded is difficult for me'
+};
+
+function setScale(e, id) {
+  const t = e.currentTarget, r = t.getBoundingClientRect();
+  const p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  const v = Math.round(p * 9) + 1;
+  document.getElementById(id + '-fill').style.width = (p * 100) + '%';
+  document.getElementById(id + '-thumb').style.left = (p * 100) + '%';
+  document.getElementById(id + '-val').textContent = v;
+  document.getElementById(id + '-lbl').textContent = scaleLabels[v] || '';
+  if (id === 'eq2') answers.eq2_vulnerability = v;
+}
+
+// ─── OPTIONS ─────────────────────────────────────────────────────────────────
+function selOpt(grp, idx) {
+  const c = document.getElementById(grp + '-opts');
+  if (!c) return;
+  c.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+  c.querySelectorAll('.opt')[idx].classList.add('sel');
+  const btn = document.getElementById(grp + '-btn');
+  if (btn) btn.disabled = false;
+  const th = document.getElementById(grp + '-think');
+  if (th) { th.classList.add('show'); setTimeout(() => th.classList.remove('show'), 1800); }
+  if (grp === 'eq1') {
+    answers.eq1_choice = idx;
+    answers.eq1_label = eq1Labels[idx];
+  }
+}
+
+// ─── TEXTAREA ─────────────────────────────────────────────────────────────────
+function checkTa(id) {
+  const ta = document.getElementById(id + '-ta');
+  const btn = document.getElementById(id + '-btn');
+  const wc = ta ? ta.value.trim().split(/\s+/).filter(Boolean).length : 0;
+  if (btn) btn.disabled = wc < 20;
+  if (id === 'eq3') answers.eq3_mistake = ta ? ta.value : '';
+  if (id === 'int1') answers.int1_why_now = ta ? ta.value : '';
+  if (id === 'int3') answers.int3_extra = ta ? ta.value : '';
+}
+
+// ─── TAGS ────────────────────────────────────────────────────────────────────
+function togTag(el) {
+  el.classList.toggle('sel');
+  answers.int2_dealbreakers = [...document.querySelectorAll('.tag.sel')].map(t => t.textContent.trim());
+}
+
+// ─── AXIS ────────────────────────────────────────────────────────────────────
+function setAx(e, id) {
+  const t = e.currentTarget, r = t.getBoundingClientRect();
+  const p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  document.getElementById('ax-' + id + '-f').style.width = (p * 100) + '%';
+  document.getElementById('ax-' + id + '-t').style.left = (p * 100) + '%';
+  if (id === 'fam') answers.values_family = Math.round(p * 100);
+  if (id === 'lt') answers.values_future = Math.round(p * 100);
+}
+
+// ─── PRIORITY LIST ────────────────────────────────────────────────────────────
+let dragEl = null;
+document.addEventListener('DOMContentLoaded', () => {
+  const list = document.getElementById('plist');
+  if (!list) return;
+  list.addEventListener('dragstart', e => {
+    dragEl = e.target.closest('.pl-item');
+    if (dragEl) setTimeout(() => dragEl.classList.add('drag'), 0);
+  });
+  list.addEventListener('dragend', () => {
+    if (dragEl) dragEl.classList.remove('drag');
+    dragEl = null;
+    updateRanks();
+  });
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    const after = getDragAfterElement(list, e.clientY);
+    if (!dragEl) return;
+    if (after == null) list.appendChild(dragEl);
+    else list.insertBefore(dragEl, after);
+  });
+});
+
+function getDragAfterElement(container, y) {
+  return [...container.querySelectorAll('.pl-item:not(.drag)')].reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    return offset < 0 && offset > closest.offset ? { offset, element: child } : closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function updateRanks() {
+  document.querySelectorAll('#plist .pl-rank').forEach((r, i) => r.textContent = i + 1);
+  answers.values_priority = [...document.querySelectorAll('#plist .pl-lbl')].map(l => l.textContent.trim());
+}
+
+// ─── PROCESSING STEP ANIMATION ────────────────────────────────────────────────
+function animStep(id, label) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'ps act';
+  el.querySelector('.ps-ic').textContent = '◌';
+  el.querySelector('.ps-lbl').textContent = label + '…';
+}
+
+function doneStep(id, label) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'ps done';
+  el.querySelector('.ps-ic').textContent = '✓';
+  el.querySelector('.ps-lbl').textContent = label;
+}
+
+// ─── REAL AI SCORING ──────────────────────────────────────────────────────────
+async function scoreWithAI(snapshot) {
+  const prompt = `You are the admissions AI for LuvCoachAI, a premium relationship matchmaking platform with rigorous standards. You must assess this applicant honestly — not generously. The platform has a real gate: roughly 40% of applicants are accepted, 30% go to borderline review, and 30% are rejected.
+
+Here is the applicant's assessment data:
+
+EMOTIONAL INTELLIGENCE
+- Response to emotional withdrawal scenario: "${snapshot.eq1_label}"
+- Vulnerability openness (1=very guarded, 10=very open): ${snapshot.eq2_vulnerability}/10
+- Reflection on own mistake in a relationship: "${snapshot.eq3_mistake}"
+
+VALUES
+- Priority ranking (1=most important): ${snapshot.values_priority.map((v,i) => `${i+1}. ${v}`).join(', ')}
+- Family/home centrality (0=independent, 100=integrated): ${snapshot.values_family}/100
+- Future vision clarity (0=open, 100=very defined): ${snapshot.values_future}/100
+
+INTENT & READINESS
+- Why applying now: "${snapshot.int1_why_now}"
+- Dealbreakers selected: ${snapshot.int2_dealbreakers.length > 0 ? snapshot.int2_dealbreakers.join(', ') : 'None selected'}
+- Additional context (optional): "${snapshot.int3_extra || 'Not provided'}"
+
+Assess across three dimensions, scoring each 0–100:
+1. EQ_SCORE: Emotional maturity, self-awareness, and capacity for intimacy
+2. VALUES_SCORE: Clarity, depth, and coherence of values
+3. INTENT_SCORE: Genuine readiness for a serious relationship right now
+
+Then give a VERDICT: "ACCEPTED", "BORDERLINE", or "REJECTED"
+
+Rules for verdicts:
+- ACCEPTED: All three scores above 70, or two above 80 and one above 60. Requires the intent text to show genuine self-reflection (not vague platitudes).
+- BORDERLINE: Mixed scores, some genuine strengths but meaningful concerns. Intent feels real but incomplete.
+- REJECTED: Intent text is superficial/generic, EQ score below 50, or responses show lack of self-awareness or genuine readiness.
+
+Also write a short REASONING paragraph (2–3 sentences, in second person "Your...") explaining the decision — be specific about what you saw in their answers, not generic. This will be shown to the applicant.
+
+Respond ONLY with valid JSON in this exact format, no other text:
+{
+  "eq_score": <number>,
+  "values_score": <number>,
+  "intent_score": <number>,
+  "verdict": "ACCEPTED" | "BORDERLINE" | "REJECTED",
+  "reasoning": "<string>"
+}`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "anthropic-dangerous-direct-browser-access": "true" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+
+  if (!response.ok) throw new Error('API error ' + response.status);
+  const data = await response.json();
+  const text = data.content.map(i => i.text || '').join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+// ─── START PROCESSING ─────────────────────────────────────────────────────────
+async function startProc() {
+  // Capture any final textarea changes
+  const int3ta = document.getElementById('int3-ta');
+  if (int3ta) answers.int3_extra = int3ta.value;
+
+  // Capture current priority order
+  answers.values_priority = [...document.querySelectorAll('#plist .pl-lbl')].map(l => l.textContent.trim());
+
+  // Reset processing steps
+  ['ps1','ps2','ps3','ps4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.className = 'ps pend';
+      el.querySelector('.ps-ic').textContent = '○';
+    }
+  });
+  document.getElementById('proc-error').style.display = 'none';
+
+  go('proc');
+  document.querySelectorAll('.db').forEach(b => b.classList.remove('on'));
+
+  // Step animation timing
+  setTimeout(() => animStep('ps1', 'EQ pattern analysis'), 400);
+  setTimeout(() => doneStep('ps1', 'EQ pattern analysis complete'), 1600);
+  setTimeout(() => animStep('ps2', 'Values mapping in progress'), 1700);
+  setTimeout(() => doneStep('ps2', 'Values mapping complete'), 3200);
+  setTimeout(() => animStep('ps3', 'Intent scoring in progress'), 3300);
+
+  try {
+    const snapshot = { ...answers };
+    const result = await scoreWithAI(snapshot);
+
+    // Ensure minimum animation time
+    await new Promise(r => setTimeout(r, 4000));
+
+    doneStep('ps3', 'Intent scoring complete');
+    await new Promise(r => setTimeout(r, 600));
+    animStep('ps4', 'Final threshold assessment');
+    await new Promise(r => setTimeout(r, 1200));
+    doneStep('ps4', 'Final threshold assessment complete');
+    await new Promise(r => setTimeout(r, 700));
+
+    applyResult(result);
+
+  } catch (err) {
+    console.error('Scoring error:', err);
+    // Fallback: route to borderline
+    await new Promise(r => setTimeout(r, 4500));
+    doneStep('ps3', 'Intent scoring complete');
+    await new Promise(r => setTimeout(r, 600));
+    animStep('ps4', 'Routing to manual review');
+    await new Promise(r => setTimeout(r, 1000));
+    document.getElementById('proc-error').style.display = 'block';
+    await new Promise(r => setTimeout(r, 1500));
+    document.getElementById('brd-reasoning').textContent = 'The automated scoring system encountered an issue. Your application has been routed to human review. A reviewer will be in touch within 2 working days.';
+    go('brd');
+  }
+}
+
+function applyResult(result) {
+  const verdict = result.verdict || 'BORDERLINE';
+  const eq = result.eq_score || 0;
+  const val = result.values_score || 0;
+  const intent = result.intent_score || 0;
+  const reasoning = result.reasoning || '';
+
+  if (verdict === 'ACCEPTED') {
+    document.getElementById('acc-eq').textContent = eq;
+    document.getElementById('acc-val').textContent = val;
+    document.getElementById('acc-int').textContent = intent;
+    document.getElementById('acc-reasoning').textContent = reasoning;
+    go('acc');
+    document.querySelectorAll('.db').forEach(b => { if (b.textContent.includes('Accepted')) b.classList.add('on'); });
+
+  } else if (verdict === 'REJECTED') {
+    document.getElementById('rej-reasoning').textContent = '"' + reasoning + '"';
+    go('rej');
+    document.querySelectorAll('.db').forEach(b => { if (b.textContent.includes('Rejected')) b.classList.add('on'); });
+
+  } else {
+      document.getElementById('brd-reasoning').textContent = reasoning;
+    go('brd');
+    document.querySelectorAll('.db').forEach(b => { if (b.textContent.includes('Review')) b.classList.add('on'); });
+  }
+}
+</script>
+</body>
+</html>
